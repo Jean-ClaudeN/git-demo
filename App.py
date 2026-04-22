@@ -1,4 +1,11 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="AI Strategy Navigator",
+    page_icon="🧠",
+    layout="wide"
+)
+
 st.markdown("""
 <style>
 .main {
@@ -17,7 +24,8 @@ div.stButton > button {
     border: none;
     border-radius: 12px;
     font-weight: 600;
-    padding: 0.6rem 1.2rem;
+    padding: 0.7rem 1.2rem;
+    width: 100%;
 }
 .card {
     background: white;
@@ -26,18 +34,28 @@ div.stButton > button {
     box-shadow: 0 4px 14px rgba(0,0,0,0.08);
     margin-bottom: 16px;
 }
+.hero {
+    background: linear-gradient(135deg, #1D4ED8, #F59E0B);
+    padding: 28px;
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 24px;
+}
+.badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+.high { background-color: #FEE2E2; color: #B91C1C; }
+.medium { background-color: #FEF3C7; color: #92400E; }
+.low { background-color: #DCFCE7; color: #166534; }
 </style>
 """, unsafe_allow_html=True)
 
-st.set_page_config(
-    page_title="AI Strategy Navigator",
-    page_icon="🧠",
-    layout="wide"
-)
-
-# -----------------------------
-# Scenario library
-# -----------------------------
 SCENARIOS = {
     "Student used AI for essay writing": {
         "role": "Dean of a Professional School",
@@ -63,7 +81,7 @@ SCENARIOS = {
             "Require transparency when AI meaningfully contributed to the assignment",
             "Use sanctions and coaching proportionate to the level of replacement"
         ],
-        "next_step": "Meet with faculty to clarify the assignment’s core learning objective and compare the submitted work against that objective before determining a response."
+        "next_step": "Meet with faculty to clarify the assignment’s core learning objective before determining a response."
     },
     "AI used in IEP accommodations": {
         "role": "Special Education Coordinator",
@@ -143,72 +161,38 @@ SCENARIOS = {
     }
 }
 
-# -----------------------------
-# Helper
-# -----------------------------
-def render_analysis(data, selected_values):
-    st.subheader("Situation Summary")
-    st.markdown(f"**Role Context:** {data['role']}")
-    st.markdown(f"**Focus Area:** {selected_values['category']}")
-    st.markdown(f"**Risk Level:** {selected_values['risk']}")
-    st.info(data["scenario"])
+def risk_badge(risk):
+    risk_class = risk.lower()
+    return f'<span class="badge {risk_class}">{risk} Risk</span>'
 
-    col1, col2 = st.columns(2)
+def render_card(title, items):
+    html = f'<div class="card"><h3>{title}</h3>'
+    if isinstance(items, list):
+        html += "<ul>"
+        for item in items:
+            html += f"<li>{item}</li>"
+        html += "</ul>"
+    else:
+        html += f"<p>{items}</p>"
+    html += "</div>"
+    st.markdown(html, unsafe_allow_html=True)
 
-    with col1:
-        st.subheader("Core Tensions")
-        for item in data["tensions"]:
-            st.markdown(f"- {item}")
-
-        st.subheader("Decision Questions")
-        for item in data["questions"]:
-            st.markdown(f"- {item}")
-
-    with col2:
-        st.subheader("Adaptive Guardrails")
-        for item in data["guardrails"]:
-            st.markdown(f"- {item}")
-
-        st.subheader("Recommended Next Step")
-        st.success(data["next_step"])
-
-    st.subheader("Responsible AI Position")
-    st.warning(
-        "This tool does not make the decision for the administrator. "
-        "It structures judgment, surfaces risks, and helps leaders apply context-aware guardrails."
-    )
-
-    st.subheader("High-Level Output")
-    metric1, metric2, metric3 = st.columns(3)
-    metric1.metric("Decisions Clarified", "1")
-    metric2.metric("Risks Identified", str(len(data["tensions"])))
-    metric3.metric("Guardrails Suggested", str(len(data["guardrails"])))
-
-    with st.expander("Defensible Dean-Level Framing"):
-        st.write(
-            "A dean can defend this output because it does not outsource responsibility. "
-            "It makes the underlying educational values explicit: learning objective, fairness, "
-            "professional standards, transparency, and consistency."
-        )
-
-# -----------------------------
-# UI
-# -----------------------------
-st.title("🧠 AI Strategy Navigator")
-st.caption("Practical AI decisions, grounded in school context.")
-
-st.markdown("## Responsible AI decisions, made in real time")
-st.write(
-    "Helping administrators navigate complex AI use cases with clarity, "
-    "instead of relying on rigid, one-size-fits-all policies."
-)
-
-st.divider()
+st.markdown("""
+<div class="hero">
+    <h1>🧠 AI Strategy Navigator</h1>
+    <p style="font-size:18px; margin-top:8px;">
+        Responsible AI decisions, made in real time.
+    </p>
+    <p style="font-size:15px;">
+        Helping administrators navigate complex AI use cases with clarity, not rigid policies.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 left, right = st.columns([1, 2])
 
 with left:
-    st.markdown("### Quick Filters")
+    st.subheader("Quick Filters")
     role = st.selectbox(
         "Role",
         [
@@ -218,60 +202,80 @@ with left:
             "Program Director"
         ]
     )
+
     category = st.selectbox(
         "Primary Concern",
         ["Academic Integrity", "Accessibility", "Assessment", "Equity"]
     )
-    risk = st.select_slider("Risk Level", options=["Low", "Medium", "High"], value="High")
 
-    st.markdown("### Quick Starts")
-    quick_start = st.radio(
-        "Choose a real case",
-        list(SCENARIOS.keys())
+    risk = st.select_slider(
+        "Risk Level",
+        options=["Low", "Medium", "High"],
+        value="High"
     )
 
+    st.subheader("Quick Start Scenarios")
+    quick_start = st.radio("Choose a case", list(SCENARIOS.keys()))
+
 with right:
-    st.markdown("### Describe the situation in your school")
+    st.subheader("Describe the situation in your school")
     user_scenario = st.text_area(
         "Scenario",
         value=SCENARIOS[quick_start]["scenario"],
         height=140
     )
 
-    analyze = st.button("Analyze Scenario", use_container_width=True)
+    analyze = st.button("Analyze Scenario")
 
 if analyze:
-    selected = SCENARIOS[quick_start].copy()
-    selected["scenario"] = user_scenario
+    selected = SCENARIOS[quick_start]
 
-    # Override displayed values from user filters for a more interactive feel
-    render_analysis(selected, {
-        "category": category,
-        "risk": risk
-    })
+    st.markdown("## Analysis")
+    st.markdown(risk_badge(risk), unsafe_allow_html=True)
+
+    render_card("Situation Summary", f"""
+    <strong>Role Context:</strong> {role}<br>
+    <strong>Focus Area:</strong> {category}<br><br>
+    {user_scenario}
+    """)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        render_card("Core Tensions", selected["tensions"])
+        render_card("Decision Questions", selected["questions"])
+
+    with col2:
+        render_card("Adaptive Guardrails", selected["guardrails"])
+        render_card("Recommended Next Step", selected["next_step"])
+
+    st.warning(
+        "This tool does not make the decision for the administrator. "
+        "It structures judgment, surfaces risks, and helps leaders apply context-aware guardrails."
+    )
+
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Decisions Clarified", "1")
+    m2.metric("Risks Identified", str(len(selected["tensions"])))
+    m3.metric("Guardrails Suggested", str(len(selected["guardrails"])))
+
+    with st.expander("Why this is defensible for a dean"):
+        st.write(
+            "This output is defensible because it does not outsource responsibility. "
+            "It makes the learning objective, fairness concerns, transparency expectations, "
+            "and professional standards visible before action is taken."
+        )
 
 st.divider()
 
-st.markdown("### Featured Scenarios")
-c1, c2, c3, c4 = st.columns(4)
-with c1:
-    st.info("Student uses AI to write an essay")
-with c2:
-    st.info("AI used in IEP accommodations")
-with c3:
-    st.info("Teacher uses AI for grading or test creation")
-with c4:
-    st.info("Group project with AI involvement")
-
-st.markdown("### Works Across")
+st.subheader("Works Across")
 a, b, c, d = st.columns(4)
 a.success("K–12 Schools")
 b.success("Higher Education")
 c.success("Special Education")
 d.success("Professional Programs")
 
-st.divider()
-st.markdown("### Responsible Use")
+st.subheader("Responsible Use")
 st.write(
     "This tool does not generate policy automatically or make decisions for administrators. "
     "It helps leaders clarify context, surface tensions, and apply adaptable guardrails."
