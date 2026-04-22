@@ -1,3 +1,4 @@
+import streamlit as st
 st.markdown("""
 <style>
 .main {
@@ -27,7 +28,6 @@ div.stButton > button {
 }
 </style>
 """, unsafe_allow_html=True)
-import streamlit as st
 
 st.set_page_config(
     page_title="AI Strategy Navigator",
