@@ -1,54 +1,83 @@
 import streamlit as st
 
-st.set_page_config(page_title="AI Strategy Navigator", layout="centered")
+st.set_page_config(page_title="AI Governance Simulator", layout="centered")
 
-st.title("AI Strategy Navigator")
-st.caption("Interactive support for school leaders making AI decisions")
+st.title("🎓 AI Governance Simulator")
+st.caption("Decision support for academic leaders navigating AI use")
 
+# Role selection
 role = st.selectbox(
-    "Choose a role",
-    ["K-12 Special Education Coordinator", "Principal", "District Administrator"]
+    "Select your role",
+    ["Dean (Professional School)", "Program Director", "Academic Integrity Officer"]
 )
 
-scenario = st.text_area(
-    "Enter a real scenario",
-    "A student with an IEP used AI to generate a writing assignment."
+# Scenario presets
+scenario_option = st.selectbox(
+    "Choose a scenario or write your own",
+    [
+        "Graduate student used AI to generate a policy analysis assignment",
+        "Student used AI for a take-home exam",
+        "Student used AI to assist with research synthesis",
+        "Custom scenario"
+    ]
 )
 
-if st.button("Analyze Scenario"):
-    st.success("Scenario analyzed")
+# Custom input
+custom_scenario = ""
+if scenario_option == "Custom scenario":
+    custom_scenario = st.text_area("Enter your scenario")
 
-    st.subheader("Situation Summary")
-    st.write(f"**Role:** {role}")
-    st.write(f"**Scenario:** {scenario}")
+scenario = custom_scenario if custom_scenario else scenario_option
 
-    st.subheader("Key Tensions")
-    st.markdown("""
-    - Accessibility vs academic fairness  
-    - Support vs skill replacement  
-    - Individual accommodation vs system consistency  
-    """)
+if st.button("Run Simulation"):
 
-    st.subheader("Decision Questions")
-    st.markdown("""
-    - What is the learning objective of this assignment?  
-    - Does AI support the task or replace the skill being assessed?  
-    - Is this use aligned with student accommodations or school expectations?  
-    - Would this decision remain fair if applied consistently?  
-    """)
+    st.success("Simulation Active")
 
-    st.subheader("Guardrails")
-    st.markdown("""
-    - Allow AI when it supports access to learning  
-    - Do not allow AI when it replaces the core skill being measured  
-    - Review decisions in context, not as one-size-fits-all rules  
-    """)
+    # Tabs for high-caliber feel
+    tab1, tab2, tab3, tab4 = st.tabs([
+        "Situation", "Tensions", "Decision Framework", "Action Plan"
+    ])
 
-    st.subheader("Recommended Next Step")
-    st.info("Clarify with the teacher what skill the assignment is actually assessing.")
+    with tab1:
+        st.subheader("📍 Situation Summary")
+        st.write(f"**Role:** {role}")
+        st.write(f"**Scenario:** {scenario}")
 
-    st.subheader("Why this matters")
-    st.write(
-        "This tool does not make the decision for the administrator. "
-        "It structures the thinking needed to make a responsible one."
-    )
+    with tab2:
+        st.subheader("⚖️ Core Tensions")
+        st.markdown("""
+        - Academic integrity vs legitimate AI support  
+        - Skill development vs task completion  
+        - Consistency across students vs individual context  
+        - Institutional standards vs evolving technology  
+        """)
+
+    with tab3:
+        st.subheader("🧠 Decision Framework")
+
+        st.markdown("### Key Questions")
+        st.markdown("""
+        - What is the **learning objective** of this assignment?  
+        - Does AI use **support or replace** that objective?  
+        - What level of AI use is **acceptable in this program**?  
+        - Would this decision be **consistent across all students**?  
+        """)
+
+        st.markdown("### Guardrails")
+        st.markdown("""
+        - Allow AI when it supports analysis and understanding  
+        - Do not allow AI when it replaces core assessment skills  
+        - Evaluate based on **learning goals, not tools used**  
+        """)
+
+    with tab4:
+        st.subheader("🚀 Recommended Action")
+
+        st.markdown("""
+        - Clarify assignment expectations with faculty  
+        - Determine if AI use replaced core competencies  
+        - Provide student guidance rather than immediate punishment  
+        - Update program-level AI guidelines if needed  
+        """)
+
+        st.info("This tool does not make decisions — it structures professional judgment.")
