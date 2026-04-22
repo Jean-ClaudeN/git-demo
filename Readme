@@ -1,8 +1,7 @@
 # AI Strategy Navigator
 
-A simple Streamlit prototype that helps school leaders think through AI-related decisions in education.
+A simple Streamlit prototype for school leaders making responsible AI decisions.
 
 ## Run locally
 ```bash
-pip install streamlit
 streamlit run app.py
