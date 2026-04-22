@@ -1,3 +1,32 @@
+st.markdown("""
+<style>
+.main {
+    background-color: #F8FAFC;
+}
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+div[data-testid="stTextArea"] textarea {
+    border-radius: 12px;
+}
+div.stButton > button {
+    background: linear-gradient(90deg, #1D4ED8, #F59E0B);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.6rem 1.2rem;
+}
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+}
+</style>
+""", unsafe_allow_html=True)
 import streamlit as st
 
 st.set_page_config(
